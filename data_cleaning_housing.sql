@@ -29,10 +29,10 @@ GO
 
 UPDATE housing
 SET SplitPropertyAddress = SUBSTRING(
-									PropertyAddress
-									,1
-									,CHARINDEX(',', PropertyAddress) -1
-									);
+				PropertyAddress
+				,1
+				,CHARINDEX(',', PropertyAddress) -1
+);
 
 ALTER TABLE housing
 ADD SplitPropertyCity NVARCHAR(255);
@@ -40,10 +40,10 @@ GO
 
 UPDATE housing
 SET SplitPropertyCity = SUBSTRING(
-								PropertyAddress
-								,CHARINDEX(',', PropertyAddress) +2
-								,LEN(PropertyAddress)
-								);
+				PropertyAddress
+				,CHARINDEX(',', PropertyAddress) +2
+				,LEN(PropertyAddress)
+);
 
 -- 4. Split OwnerAddress into 3 columns (Address, City, State)
 
@@ -55,10 +55,10 @@ GO
 
 UPDATE housing
 SET SplitOwnerAddress = SUBSTRING(
-								OwnerAddress
-								,1
-								,CHARINDEX(',', OwnerAddress) -1
-								);
+				OwnerAddress
+				,1
+				,CHARINDEX(',', OwnerAddress) -1
+);
 
 
 ALTER TABLE housing
@@ -67,19 +67,19 @@ GO
 
 UPDATE housing
 SET SplitOwnerCity = SUBSTRING(
-							SUBSTRING(
-									OwnerAddress
-									,CHARINDEX(',', OwnerAddress) +2
-									,LEN(OwnerAddress)
-									)
-							,1
-							,CHARINDEX(',', SUBSTRING(
-												OwnerAddress
-												,CHARINDEX(',', OwnerAddress) +2
-												,LEN(OwnerAddress)
-											)
-									) -1
-								);
+				SUBSTRING(
+					OwnerAddress
+					,CHARINDEX(',', OwnerAddress) +2
+					,LEN(OwnerAddress)
+					)
+				,1
+				,CHARINDEX(',', SUBSTRING(
+							OwnerAddress
+							,CHARINDEX(',', OwnerAddress) +2
+							,LEN(OwnerAddress)
+							)
+					) -1
+);
 
 ALTER TABLE housing
 ADD SplitOwnerState NVARCHAR(255);
@@ -87,21 +87,19 @@ GO
 
 UPDATE housing
 SET SplitOwnerState = SUBSTRING(
-							SUBSTRING(
-									OwnerAddress
-									,CHARINDEX(',', OwnerAddress) +2
-									,LEN(OwnerAddress)
-									)
-							,CHARINDEX(',', SUBSTRING(
-												OwnerAddress
-												,CHARINDEX(',', OwnerAddress) +2
-												,LEN(OwnerAddress)
-												)
-										) +2
+				SUBSTRING(
+					OwnerAddress
+					,CHARINDEX(',', OwnerAddress) +2
+					,LEN(OwnerAddress)
+					)
+				,CHARINDEX(',', SUBSTRING(
+							OwnerAddress
+							,CHARINDEX(',', OwnerAddress) +2
 							,LEN(OwnerAddress)
-							);
-SELECT TOP 5 *
-FROM housing;
+							)
+					) +2
+				,LEN(OwnerAddress)
+);
 
 ----- Method 2: Use PARSENAME
 
@@ -115,10 +113,10 @@ FROM housing;
 
 UPDATE housing
 SET SoldAsVacant = CASE
-					WHEN SoldAsVacant = 'Y' THEN 'Yes'
-					WHEN SoldAsVacant = 'N' THEN 'No'
-					ELSE SoldAsVacant
-					END;
+			WHEN SoldAsVacant = 'Y' THEN 'Yes'
+			WHEN SoldAsVacant = 'N' THEN 'No'
+			ELSE SoldAsVacant
+			END;
 	
 -- 6. Remove duplicated rows
 
@@ -127,11 +125,11 @@ WITH RowNumCTE AS (
 		*
 		,ROW_NUMBER() OVER(
 		PARTITION BY
-				ParcelID
-				,PropertyAddress
-				,SalePrice
-				,SaleDate
-				,LegalReference
+			ParcelID
+			,PropertyAddress
+			,SalePrice
+			,SaleDate
+			,LegalReference
 		ORDER BY UniqueID
 		) AS Row_Num
 	FROM housing)
@@ -143,8 +141,8 @@ WHERE Row_Num > 1;
 
 ALTER TABLE housing
 DROP COLUMN 
-		PropertyAddress
-		,OwnerAddress
-		,SaleDate
-		,TaxDistrict
+	PropertyAddress
+	,OwnerAddress
+	,SaleDate
+	,TaxDistrict
 ;
