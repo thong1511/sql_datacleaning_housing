@@ -60,7 +60,6 @@ SET SplitOwnerAddress = SUBSTRING(
 				,CHARINDEX(',', OwnerAddress) -1
 );
 
-
 ALTER TABLE housing
 ADD SplitOwnerCity NVARCHAR(255);
 GO
